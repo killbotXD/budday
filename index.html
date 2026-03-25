@@ -3,24 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>Birthday Cat Party</title>
     <style>
-        body {
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8e8f0 0%, #e8d4f0 50%, #f0e0f8 100%);
+            font-family: 'Georgia', serif;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Blob background shapes like the reference images */
+        .blob-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80vw;
+            height: 80vh;
+            background: radial-gradient(ellipse, #f4dce8 0%, #e8d0f0 40%, transparent 70%);
+            border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%;
+            z-index: 0;
+            animation: blobMorph 15s ease-in-out infinite;
+        }
+
+        @keyframes blobMorph {
+            0%, 100% { border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%; }
+            33% { border-radius: 50% 60% 40% 60% / 60% 40% 50% 50%; }
+            66% { border-radius: 40% 50% 60% 40% / 50% 50% 60% 40%; }
+        }
+
+        /* Floating hearts */
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 12px;
+            animation: floatHeart linear infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes floatHeart {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Main content */
+        .scene {
+            position: relative;
+            z-index: 2;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            background-color: #f8e8f0;
-            font-family: sans-serif;
+            padding: 40px 20px;
         }
+
         h1 {
+            font-size: 2.5rem;
             color: #4a4a6a;
-            font-size: 3rem;
+            margin-bottom: 10px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(200, 160, 200, 0.4);
+        }
+
+        .subtitle {
+            color: #8a7a9a;
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        /* Three.js canvas */
+        #balloon-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
         }
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+    <div class="blob-bg"></div>
+    <div class="hearts-container" id="hearts"></div>
+
+    <div class="scene">
+        <h1>Happy Birthday!</h1>
+        <p class="subtitle">Click the cat to start the party!</p>
+    </div>
+
+    <canvas id="balloon-canvas"></canvas>
+
+    <script>
+        // Generate floating hearts
+        const heartsContainer = document.getElementById('hearts');
+        const heartColors = ['#4a4a8a', '#d4a0c0', '#a080c0', '#e0b0d0', '#6060a0'];
+        for (let i = 0; i < 25; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = '♥';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.color = heartColors[Math.floor(Math.random() * heartColors.length)];
+            heart.style.fontSize = (8 + Math.random() * 14) + 'px';
+            heart.style.animationDuration = (8 + Math.random() * 12) + 's';
+            heart.style.animationDelay = Math.random() * 10 + 's';
+            heartsContainer.appendChild(heart);
+        }
+    </script>
 </body>
 </html>

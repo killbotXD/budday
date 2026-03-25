@@ -662,12 +662,16 @@
             if (confettiActive) return;
             confettiActive = true;
 
-            // Corners: top-left, top-right, bottom-left, bottom-right
+            // Corners shooting inward: angles in radians
+            // top-left → down-right, top-right → down-left
+            // bottom-left → up-right, bottom-right → up-left
+            const w = confettiCanvas.width;
+            const h = confettiCanvas.height;
             const corners = [
-                { x: 0, y: 0, angleMin: 0.2, angleMax: 1.2 },
-                { x: confettiCanvas.width, y: 0, angleMin: 1.9, angleMax: 2.9 },
-                { x: 0, y: confettiCanvas.height, angleMin: -1.2, angleMax: -0.2 },
-                { x: confettiCanvas.width, y: confettiCanvas.height, angleMin: -2.9, angleMax: -1.9 },
+                { x: 0, y: 0, angleMin: 0.3, angleMax: 1.3 },         // top-left → shoots down-right
+                { x: w, y: 0, angleMin: Math.PI - 1.3, angleMax: Math.PI - 0.3 }, // top-right → shoots down-left
+                { x: 0, y: h, angleMin: -1.3, angleMax: -0.3 },       // bottom-left → shoots up-right
+                { x: w, y: h, angleMin: -(Math.PI - 0.3), angleMax: -(Math.PI - 1.3) }, // bottom-right → shoots up-left
             ];
 
             // Launch multiple waves
@@ -711,13 +715,16 @@
                 p.y += p.vy;
                 p.rotation += p.rotSpeed;
 
-                // Fade out when off screen or after a while
-                if (p.y > confettiCanvas.height + 50 || p.x < -50 || p.x > confettiCanvas.width + 50) {
-                    p.life -= 0.05;
+                // Fade out when off screen
+                if (p.y > confettiCanvas.height + 50 || p.x < -50 || p.x > confettiCanvas.width + 50 || p.y < -50) {
+                    p.life -= 0.08;
                 }
-                if (p.y > confettiCanvas.height * 0.7) {
-                    p.life -= 0.005;
+                // Slowly fade after reaching lower portion
+                if (p.y > confettiCanvas.height * 0.85) {
+                    p.life -= 0.01;
                 }
+                // General slow decay so they eventually disappear
+                p.life -= 0.002;
                 p.opacity = Math.max(0, p.life);
 
                 ctx.save();

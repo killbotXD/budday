@@ -151,6 +151,60 @@
             margin: 0 auto 20px;
         }
 
+        .bunting-flag {
+            cursor: pointer;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s;
+        }
+
+        .bunting-flag.scattered {
+            opacity: 0.6;
+        }
+
+        .bunting-flag.placed {
+            opacity: 1;
+            cursor: default;
+        }
+
+        .bunting-flag:not(.placed):hover {
+            filter: brightness(1.2);
+        }
+
+        .bunting-string {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            transition: stroke-dashoffset 2s ease-out;
+        }
+
+        .bunting-string.revealed {
+            stroke-dashoffset: 0;
+        }
+
+        /* Sparkle burst on flag placement */
+        @keyframes sparkle {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ffe060 0%, transparent 70%);
+            pointer-events: none;
+            animation: sparkle 0.5s ease-out forwards;
+        }
+
+        /* Stage hint pulse */
+        @keyframes hintPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .hint-pulse {
+            animation: hintPulse 1.5s ease-in-out infinite;
+        }
+
         /* Message bubble */
         .message-bubble {
             position: absolute;
@@ -298,17 +352,19 @@
         <p class="subtitle" id="subtitle">Can you help the cats set up?</p>
 
         <!-- Bunting flags -->
-        <div class="bunting">
-            <svg viewBox="0 0 500 60" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10,15 Q250,0 490,15" stroke="#3a3a5a" stroke-width="2" fill="none"/>
-                <polygon points="80,15 95,50 65,50" fill="#3a4a8a"/>
-                <polygon points="130,18 145,53 115,53" fill="#f4b8c8"/>
-                <polygon points="180,15 195,50 165,50" fill="#d06040"/>
-                <polygon points="230,12 245,47 215,47" fill="#b8e0f0"/>
-                <polygon points="280,12 295,47 265,47" fill="#3a4a8a"/>
-                <polygon points="330,15 345,50 315,50" fill="#f4b8c8"/>
-                <polygon points="380,18 395,53 365,53" fill="#d06040"/>
-                <polygon points="430,15 445,50 415,50" fill="#b8e0f0"/>
+        <div class="bunting" id="bunting-area">
+            <svg viewBox="0 0 500 120" xmlns="http://www.w3.org/2000/svg" id="bunting-svg">
+                <!-- String (hidden initially, reveals as flags are placed) -->
+                <path class="bunting-string" id="bunting-string" d="M10,15 Q250,0 490,15" stroke="#3a3a5a" stroke-width="2" fill="none"/>
+                <!-- Flags: start scattered at bottom, animate to string position on click -->
+                <polygon class="bunting-flag scattered hint-pulse" id="flag-1" data-target="80,15 95,50 65,50"    points="40,85 55,110 25,110"  fill="#3a4a8a"/>
+                <polygon class="bunting-flag scattered hint-pulse" id="flag-2" data-target="130,18 145,53 115,53"  points="460,90 475,115 445,115" fill="#f4b8c8" style="animation-delay:0.2s"/>
+                <polygon class="bunting-flag scattered hint-pulse" id="flag-3" data-target="180,15 195,50 165,50"  points="120,88 135,113 105,113" fill="#d06040" style="animation-delay:0.4s"/>
+                <polygon class="bunting-flag scattered hint-pulse" id="flag-4" data-target="230,12 245,47 215,47"  points="350,92 365,117 335,117" fill="#b8e0f0" style="animation-delay:0.1s"/>
+                <polygon class="bunting-flag scattered hint-pulse" id="flag-5" data-target="280,12 295,47 265,47"  points="200,90 215,115 185,115" fill="#3a4a8a" style="animation-delay:0.3s"/>
+                <polygon class="bunting-flag scattered hint-pulse" id="flag-6" data-target="330,15 345,50 315,50"  points="280,87 295,112 265,112" fill="#f4b8c8" style="animation-delay:0.5s"/>
+                <polygon class="bunting-flag scattered hint-pulse" id="flag-7" data-target="380,18 395,53 365,53"  points="400,85 415,110 385,110" fill="#d06040" style="animation-delay:0.15s"/>
+                <polygon class="bunting-flag scattered hint-pulse" id="flag-8" data-target="430,15 445,50 415,50"  points="160,92 175,117 145,117" fill="#b8e0f0" style="animation-delay:0.35s"/>
             </svg>
         </div>
 
@@ -889,9 +945,50 @@
             }
         }
 
-        // Placeholder stage init functions (filled in next commits)
-        function initStage2() {}
-        function initStage3() {}
+        // === STAGE 1: Bunting flags ===
+        document.querySelectorAll('.bunting-flag').forEach(flag => {
+            flag.addEventListener('click', () => {
+                if (state.stage !== 1 || flag.classList.contains('placed')) return;
+
+                const target = flag.getAttribute('data-target');
+                flag.setAttribute('points', target);
+                flag.classList.remove('scattered', 'hint-pulse');
+                flag.classList.add('placed');
+
+                state.flagsPlaced++;
+
+                // Reveal string progressively
+                const string = document.getElementById('bunting-string');
+                const progress = state.flagsPlaced / 8;
+                string.style.strokeDashoffset = 1000 * (1 - progress);
+
+                // Update subtitle with count
+                subtitle.textContent = `Flags hung: ${state.flagsPlaced}/8`;
+
+                if (state.flagsPlaced === 8) {
+                    string.classList.add('revealed');
+                    setTimeout(() => advanceStage(2), 800);
+                }
+            });
+        });
+
+        // === STAGE 2: Wake the cats ===
+        function initStage2() {
+            document.querySelectorAll('.floating-cat').forEach(cat => {
+                cat.style.pointerEvents = 'auto';
+                cat.style.cursor = 'pointer';
+                // Add hint pulse to sleeping cats
+                cat.classList.add('hint-pulse');
+            });
+        }
+
+        // === STAGE 3: Light the candles ===
+        function initStage3() {
+            document.querySelectorAll('.candle-click-area').forEach(area => {
+                area.style.pointerEvents = 'auto';
+                area.style.cursor = 'pointer';
+            });
+        }
     </script>
 </body>
 </html>

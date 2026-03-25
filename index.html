@@ -88,6 +88,36 @@
             font-size: 1.1rem;
             margin-bottom: 40px;
             text-align: center;
+            transition: opacity 0.5s;
+        }
+
+        /* Progress dots */
+        .progress {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .progress-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 2px solid #b8a0c8;
+            background: transparent;
+            transition: background 0.5s, border-color 0.5s, transform 0.3s;
+        }
+
+        .progress-dot.filled {
+            background: #b8a0c8;
+            border-color: #9080a8;
+            transform: scale(1.2);
+        }
+
+        .progress-label {
+            font-size: 0.75rem;
+            color: #a090b0;
+            margin-top: 4px;
+            text-align: center;
         }
 
         /* Table cat scene */
@@ -250,8 +280,22 @@
     <div class="hearts-container" id="hearts"></div>
 
     <div class="scene">
-        <h1>Happy Birthday!</h1>
-        <p class="subtitle">Click the cat to start the party!</p>
+        <div class="progress">
+            <div>
+                <div class="progress-dot" id="dot-1"></div>
+                <div class="progress-label">Decorate</div>
+            </div>
+            <div>
+                <div class="progress-dot" id="dot-2"></div>
+                <div class="progress-label">Wake up</div>
+            </div>
+            <div>
+                <div class="progress-dot" id="dot-3"></div>
+                <div class="progress-label">Light up</div>
+            </div>
+        </div>
+        <h1 id="title">Hmm... the party isn't ready yet</h1>
+        <p class="subtitle" id="subtitle">Can you help the cats set up?</p>
 
         <!-- Bunting flags -->
         <div class="bunting">
@@ -771,27 +815,46 @@
             requestAnimationFrame(update);
         }
 
-        // Click interaction on the table cat
-        let partyStarted = false;
-        const tableCat = document.getElementById('table-cat');
+        // Game state management
+        const state = {
+            stage: 1, // 1=bunting, 2=cats, 3=candles, 4=finale
+            flagsPlaced: 0,
+            catsAwake: 0,
+            candlesLit: 0,
+        };
+
+        const title = document.getElementById('title');
+        const subtitle = document.getElementById('subtitle');
         const messageBubble = document.getElementById('message');
-        const flames = document.getElementById('flames');
         const candleGlow = document.getElementById('candle-glow');
         const catMouth = document.getElementById('cat-mouth');
 
-        tableCat.addEventListener('click', () => {
-            if (partyStarted) return;
-            partyStarted = true;
+        function advanceStage(nextStage) {
+            state.stage = nextStage;
+            if (nextStage === 2) {
+                document.getElementById('dot-1').classList.add('filled');
+                title.textContent = 'Great! Now wake up the sleepy cats';
+                subtitle.textContent = 'Tap each floating cat to wake them up';
+                initStage2();
+            } else if (nextStage === 3) {
+                document.getElementById('dot-2').classList.add('filled');
+                title.textContent = 'Almost there! Light the candles';
+                subtitle.textContent = 'Tap each candle on the cake';
+                initStage3();
+            } else if (nextStage === 4) {
+                document.getElementById('dot-3').classList.add('filled');
+                title.textContent = 'Happy Birthday!';
+                subtitle.style.opacity = '0';
+                triggerFinale();
+            }
+        }
 
-            // Launch confetti from corners
+        function triggerFinale() {
+            // Launch confetti
             launchConfetti();
 
             // Show message bubble
             messageBubble.classList.add('show');
-
-            // Light the cake on fire
-            flames.classList.add('lit');
-            candleGlow.style.opacity = '0';
 
             // Make the main cat smile big
             catMouth.setAttribute('d', 'M340,188 Q346,196 352,188');
@@ -800,7 +863,6 @@
             // Make all floating cats happy (bigger smiles)
             document.querySelectorAll('.cat-smile').forEach(mouth => {
                 const d = mouth.getAttribute('d');
-                // Parse and make the smile wider
                 mouth.setAttribute('d', d.replace(/Q(\d+),(\d+)/, (m, x, y) => `Q${x},${parseInt(y) + 4}`));
                 mouth.setAttribute('stroke-width', '1.5');
             });
@@ -810,7 +872,7 @@
                 cat.style.animationDuration = '3s';
             });
 
-            // Spawn extra confetti/hearts burst
+            // Spawn extra hearts burst
             for (let i = 0; i < 30; i++) {
                 setTimeout(() => {
                     const heart = document.createElement('div');
@@ -825,7 +887,11 @@
                     heartsContainer.appendChild(heart);
                 }, i * 100);
             }
-        });
+        }
+
+        // Placeholder stage init functions (filled in next commits)
+        function initStage2() {}
+        function initStage3() {}
     </script>
 </body>
 </html>

@@ -90,6 +90,118 @@
             text-align: center;
         }
 
+        /* Table cat scene */
+        .table-scene {
+            position: relative;
+            width: 600px;
+            max-width: 90vw;
+            margin: 0 auto;
+        }
+
+        .table-scene svg {
+            width: 100%;
+            height: auto;
+        }
+
+        #table-cat {
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        #table-cat:hover {
+            transform: scale(1.02);
+            filter: brightness(1.05);
+        }
+
+        /* Bunting flags */
+        .bunting {
+            position: relative;
+            width: 500px;
+            max-width: 85vw;
+            margin: 0 auto 20px;
+        }
+
+        /* Message bubble */
+        .message-bubble {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            background: white;
+            border-radius: 20px;
+            padding: 12px 24px;
+            font-size: 1.2rem;
+            color: #4a4a6a;
+            box-shadow: 0 4px 20px rgba(100, 80, 120, 0.2);
+            white-space: nowrap;
+            z-index: 10;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .message-bubble.show {
+            transform: translateX(-50%) scale(1);
+        }
+
+        .message-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 12px solid white;
+        }
+
+        /* Fire animation on cake */
+        .flame {
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .flame.lit {
+            opacity: 1;
+            animation: flicker 0.3s ease-in-out infinite alternate;
+        }
+
+        @keyframes flicker {
+            0% { transform: scaleY(1) scaleX(1); }
+            50% { transform: scaleY(1.2) scaleX(0.9); }
+            100% { transform: scaleY(0.9) scaleX(1.1); }
+        }
+
+        /* Floating cat with balloons */
+        .floating-cat {
+            position: fixed;
+            z-index: 4;
+            pointer-events: none;
+            animation: floatCat linear infinite;
+        }
+
+        .floating-cat svg {
+            width: 120px;
+            height: auto;
+        }
+
+        .floating-cat.happy svg .cat-mouth {
+            transition: d 0.5s;
+        }
+
+        @keyframes floatCat {
+            0% { transform: translateY(0px) rotate(-2deg); }
+            25% { transform: translateY(-15px) rotate(1deg); }
+            50% { transform: translateY(-5px) rotate(-1deg); }
+            75% { transform: translateY(-20px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(-2deg); }
+        }
+
+        /* Cloud decorations */
+        .cloud {
+            position: fixed;
+            z-index: 1;
+            opacity: 0.5;
+        }
+
         /* Three.js canvas */
         #balloon-canvas {
             position: fixed;
@@ -109,6 +221,298 @@
     <div class="scene">
         <h1>Happy Birthday!</h1>
         <p class="subtitle">Click the cat to start the party!</p>
+
+        <!-- Bunting flags -->
+        <div class="bunting">
+            <svg viewBox="0 0 500 60" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10,15 Q250,0 490,15" stroke="#3a3a5a" stroke-width="2" fill="none"/>
+                <polygon points="80,15 95,50 65,50" fill="#3a4a8a"/>
+                <polygon points="130,18 145,53 115,53" fill="#f4b8c8"/>
+                <polygon points="180,15 195,50 165,50" fill="#d06040"/>
+                <polygon points="230,12 245,47 215,47" fill="#b8e0f0"/>
+                <polygon points="280,12 295,47 265,47" fill="#3a4a8a"/>
+                <polygon points="330,15 345,50 315,50" fill="#f4b8c8"/>
+                <polygon points="380,18 395,53 365,53" fill="#d06040"/>
+                <polygon points="430,15 445,50 415,50" fill="#b8e0f0"/>
+            </svg>
+        </div>
+
+        <!-- Main cat on table scene -->
+        <div class="table-scene">
+            <div class="message-bubble" id="message">🎉 Meow! Let's Party! 🎂</div>
+            <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" id="main-scene">
+                <!-- Pink blob background -->
+                <ellipse cx="300" cy="180" rx="260" ry="180" fill="#f8dce8" opacity="0.6"/>
+
+                <!-- Wall frames -->
+                <rect x="60" y="40" width="80" height="60" fill="none" stroke="#3a3a5a" stroke-width="2" rx="3"/>
+                <rect x="70" y="120" width="60" height="45" fill="none" stroke="#3a3a5a" stroke-width="2" rx="3"/>
+                <rect x="430" y="30" width="100" height="55" fill="none" stroke="#3a3a5a" stroke-width="2" rx="3"/>
+                <rect x="440" y="100" width="90" height="50" fill="none" stroke="#3a3a5a" stroke-width="2" rx="3"/>
+
+                <!-- Table -->
+                <ellipse cx="300" cy="350" rx="160" ry="20" fill="#a8d8d8" opacity="0.4"/>
+                <rect x="130" y="240" width="340" height="12" rx="3" fill="#2a2a3a"/>
+                <path d="M180,252 L170,340" stroke="#2a2a3a" stroke-width="8" stroke-linecap="round"/>
+                <path d="M420,252 L430,340" stroke="#2a2a3a" stroke-width="8" stroke-linecap="round"/>
+                <path d="M300,252 L300,340" stroke="#2a2a3a" stroke-width="6" stroke-linecap="round"/>
+
+                <!-- Cake -->
+                <g id="cake">
+                    <!-- Bottom tier -->
+                    <rect x="185" y="195" width="100" height="45" rx="5" fill="#d06040"/>
+                    <!-- Wavy decoration -->
+                    <path d="M185,210 Q197,220 210,210 Q222,200 235,210 Q247,220 260,210 Q272,200 285,210" stroke="#f0e0d0" stroke-width="3" fill="none"/>
+                    <!-- Top tier -->
+                    <rect x="195" y="165" width="80" height="35" rx="5" fill="#f4b8c8"/>
+
+                    <!-- Candles -->
+                    <rect x="218" y="140" width="4" height="25" fill="#6080c0" rx="1"/>
+                    <rect x="233" y="135" width="4" height="30" fill="#e8c040" rx="1"/>
+                    <rect x="248" y="140" width="4" height="25" fill="#6080c0" rx="1"/>
+
+                    <!-- Candle glows (before click) -->
+                    <g id="candle-glow">
+                        <line x1="212" y1="132" x2="206" y2="126" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
+                        <line x1="220" y1="128" x2="220" y2="120" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
+                        <line x1="228" y1="132" x2="234" y2="126" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
+                        <line x1="240" y1="128" x2="240" y2="120" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
+                        <line x1="248" y1="132" x2="242" y2="126" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
+                        <line x1="256" y1="128" x2="256" y2="120" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
+                        <line x1="264" y1="132" x2="270" y2="126" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
+                    </g>
+
+                    <!-- Flames (hidden until click) -->
+                    <g class="flame" id="flames">
+                        <ellipse cx="220" cy="132" rx="5" ry="10" fill="#ff6030" opacity="0.9"/>
+                        <ellipse cx="220" cy="130" rx="3" ry="7" fill="#ffa040" opacity="0.9"/>
+                        <ellipse cx="220" cy="128" rx="2" ry="4" fill="#ffe060"/>
+                        <ellipse cx="235" cy="127" rx="6" ry="12" fill="#ff6030" opacity="0.9"/>
+                        <ellipse cx="235" cy="125" rx="4" ry="8" fill="#ffa040" opacity="0.9"/>
+                        <ellipse cx="235" cy="123" rx="2" ry="5" fill="#ffe060"/>
+                        <ellipse cx="250" cy="132" rx="5" ry="10" fill="#ff6030" opacity="0.9"/>
+                        <ellipse cx="250" cy="130" rx="3" ry="7" fill="#ffa040" opacity="0.9"/>
+                        <ellipse cx="250" cy="128" rx="2" ry="4" fill="#ffe060"/>
+                    </g>
+                </g>
+
+                <!-- Cat on table -->
+                <g id="table-cat">
+                    <!-- Body -->
+                    <ellipse cx="380" cy="210" rx="65" ry="45" fill="#8a8a9a"/>
+                    <!-- Dark patches -->
+                    <ellipse cx="395" cy="200" rx="40" ry="30" fill="#5a5a6a"/>
+                    <!-- Tail -->
+                    <path d="M440,215 Q480,200 470,240 Q465,260 450,250" stroke="#5a5a6a" stroke-width="14" fill="none" stroke-linecap="round"/>
+                    <!-- Head -->
+                    <circle cx="345" cy="180" r="30" fill="#8a8a9a"/>
+                    <!-- Ears -->
+                    <polygon points="322,160 330,140 340,162" fill="#8a8a9a"/>
+                    <polygon points="326,158 332,144 338,160" fill="#f4b8c8"/>
+                    <polygon points="355,155 365,135 372,158" fill="#5a5a6a"/>
+                    <polygon points="358,154 365,140 370,156" fill="#f4b8c8"/>
+                    <!-- Face -->
+                    <circle cx="337" cy="175" r="5" fill="white"/>
+                    <circle cx="355" cy="175" r="5" fill="white"/>
+                    <circle cx="338" cy="176" r="3" fill="#2a2a3a"/>
+                    <circle cx="354" cy="176" r="3" fill="#2a2a3a"/>
+                    <!-- Nose -->
+                    <polygon points="346,182 343,186 349,186" fill="#f4a0a0"/>
+                    <!-- Mouth (changes on click) -->
+                    <path id="cat-mouth" d="M343,188 Q346,191 349,188" stroke="#5a5a6a" stroke-width="1.5" fill="none"/>
+                    <!-- Whiskers -->
+                    <line x1="330" y1="183" x2="310" y2="180" stroke="#5a5a6a" stroke-width="1"/>
+                    <line x1="330" y1="186" x2="308" y2="188" stroke="#5a5a6a" stroke-width="1"/>
+                    <line x1="362" y1="183" x2="382" y2="180" stroke="#5a5a6a" stroke-width="1"/>
+                    <line x1="362" y1="186" x2="384" y2="188" stroke="#5a5a6a" stroke-width="1"/>
+                    <!-- Party hat -->
+                    <polygon points="345,155 335,140 355,140" fill="white" stroke="#b8d8f0" stroke-width="1"/>
+                    <line x1="338" y1="150" x2="338" y2="140" stroke="#f4b8c8" stroke-width="1.5"/>
+                    <line x1="345" y1="152" x2="345" y2="140" stroke="#b8d8f0" stroke-width="1.5"/>
+                    <line x1="352" y1="150" x2="352" y2="140" stroke="#f4b8c8" stroke-width="1.5"/>
+                    <circle cx="345" cy="138" r="3" fill="#b8d8f0"/>
+                    <!-- Bow -->
+                    <path d="M335,195 Q330,190 325,195 Q330,200 335,195" fill="#f4b8c8"/>
+                    <path d="M335,195 Q340,190 345,195 Q340,200 335,195" fill="#f4b8c8"/>
+                    <circle cx="335" cy="195" r="2" fill="#d08090"/>
+                    <!-- Front paw reaching toward cake -->
+                    <ellipse cx="315" cy="235" rx="12" ry="8" fill="#8a8a9a"/>
+                </g>
+            </svg>
+        </div>
+
+        <!-- Floating cats with balloons -->
+        <div class="floating-cat" id="float-cat-1" style="left: 5%; top: 15%;">
+            <svg viewBox="0 0 150 220" xmlns="http://www.w3.org/2000/svg">
+                <!-- Balloons -->
+                <ellipse cx="55" cy="40" rx="25" ry="35" fill="#c0a0e0" opacity="0.8"/>
+                <ellipse cx="90" cy="50" rx="20" ry="30" fill="#a0c0e0" opacity="0.8"/>
+                <ellipse cx="70" cy="55" rx="22" ry="32" fill="#f0b8c8" opacity="0.8"/>
+                <!-- Strings -->
+                <line x1="55" y1="75" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
+                <line x1="90" y1="80" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
+                <line x1="70" y1="87" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
+                <!-- Cat body -->
+                <ellipse cx="75" cy="160" rx="25" ry="20" fill="#f0c8b0"/>
+                <!-- Legs -->
+                <ellipse cx="58" cy="178" rx="6" ry="10" fill="#f0c8b0"/>
+                <ellipse cx="92" cy="178" rx="6" ry="10" fill="#f0c8b0"/>
+                <!-- Tail -->
+                <path d="M98,155 Q120,145 115,170" stroke="#f0c8b0" stroke-width="6" fill="none" stroke-linecap="round"/>
+                <!-- Head -->
+                <circle cx="75" cy="138" r="18" fill="#f0c8b0"/>
+                <!-- Ears -->
+                <polygon points="62,125 58,110 70,122" fill="#f0c8b0"/>
+                <polygon points="88,125 92,110 80,122" fill="#f0c8b0"/>
+                <polygon points="64,124 60,114 69,122" fill="#f4b8c8"/>
+                <polygon points="86,124 90,114 81,122" fill="#f4b8c8"/>
+                <!-- Eyes -->
+                <circle cx="68" cy="136" r="4" fill="#2a2a3a"/>
+                <circle cx="82" cy="136" r="4" fill="#2a2a3a"/>
+                <circle cx="69" cy="135" r="1.5" fill="white"/>
+                <circle cx="83" cy="135" r="1.5" fill="white"/>
+                <!-- Nose -->
+                <ellipse cx="75" cy="141" rx="2" ry="1.5" fill="#3a3a5a"/>
+                <!-- Mouth -->
+                <path class="cat-smile" d="M72,144 Q75,146 78,144" stroke="#3a3a5a" stroke-width="1" fill="none"/>
+                <!-- Whiskers -->
+                <line x1="65" y1="140" x2="50" y2="138" stroke="#3a3a5a" stroke-width="0.8"/>
+                <line x1="65" y1="143" x2="48" y2="145" stroke="#3a3a5a" stroke-width="0.8"/>
+                <line x1="85" y1="140" x2="100" y2="138" stroke="#3a3a5a" stroke-width="0.8"/>
+                <line x1="85" y1="143" x2="102" y2="145" stroke="#3a3a5a" stroke-width="0.8"/>
+                <!-- Party hat -->
+                <polygon points="75,122 68,108 82,108" fill="#6080c0"/>
+                <circle cx="75" cy="107" r="2" fill="#ffe060"/>
+                <!-- Bow -->
+                <path d="M75,155 Q70,150 65,155 Q70,160 75,155" fill="#6080c0"/>
+                <path d="M75,155 Q80,150 85,155 Q80,160 75,155" fill="#6080c0"/>
+            </svg>
+        </div>
+
+        <div class="floating-cat" id="float-cat-2" style="right: 8%; top: 25%; animation-duration: 7s; animation-delay: 2s;">
+            <svg viewBox="0 0 150 220" xmlns="http://www.w3.org/2000/svg">
+                <!-- Balloons -->
+                <ellipse cx="65" cy="35" rx="28" ry="38" fill="#d898d0" opacity="0.8"/>
+                <ellipse cx="95" cy="55" rx="18" ry="28" fill="#90b8e0" opacity="0.8"/>
+                <!-- Strings -->
+                <line x1="65" y1="73" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
+                <line x1="95" y1="83" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
+                <!-- Cat body -->
+                <ellipse cx="75" cy="160" rx="22" ry="18" fill="#d0d0d8"/>
+                <!-- Legs -->
+                <ellipse cx="60" cy="176" rx="5" ry="9" fill="#d0d0d8"/>
+                <ellipse cx="90" cy="176" rx="5" ry="9" fill="#d0d0d8"/>
+                <!-- Tail -->
+                <path d="M95,158 Q115,148 108,172" stroke="#a0a0b0" stroke-width="5" fill="none" stroke-linecap="round"/>
+                <!-- Head -->
+                <circle cx="75" cy="140" r="16" fill="#d0d0d8"/>
+                <!-- Dark face patch -->
+                <circle cx="75" cy="140" r="12" fill="#a0a0b0"/>
+                <!-- Ears -->
+                <polygon points="63,128 60,115 72,126" fill="#d0d0d8"/>
+                <polygon points="87,128 90,115 78,126" fill="#d0d0d8"/>
+                <!-- Eyes -->
+                <circle cx="69" cy="138" r="3.5" fill="#2a2a3a"/>
+                <circle cx="81" cy="138" r="3.5" fill="#2a2a3a"/>
+                <circle cx="70" cy="137" r="1.2" fill="white"/>
+                <circle cx="82" cy="137" r="1.2" fill="white"/>
+                <!-- Nose -->
+                <ellipse cx="75" cy="142" rx="2" ry="1.5" fill="#f4a0a0"/>
+                <!-- Mouth -->
+                <path class="cat-smile" d="M72,145 Q75,147 78,145" stroke="#5a5a6a" stroke-width="1" fill="none"/>
+                <!-- Whiskers -->
+                <line x1="66" y1="141" x2="52" y2="139" stroke="#5a5a6a" stroke-width="0.8"/>
+                <line x1="66" y1="144" x2="50" y2="146" stroke="#5a5a6a" stroke-width="0.8"/>
+                <line x1="84" y1="141" x2="98" y2="139" stroke="#5a5a6a" stroke-width="0.8"/>
+                <line x1="84" y1="144" x2="100" y2="146" stroke="#5a5a6a" stroke-width="0.8"/>
+                <!-- Party hat -->
+                <polygon points="75,126 70,112 80,112" fill="#f4b8c8"/>
+                <circle cx="75" cy="111" r="2" fill="white"/>
+            </svg>
+        </div>
+
+        <div class="floating-cat" id="float-cat-3" style="left: 15%; bottom: 20%; animation-duration: 9s; animation-delay: 4s;">
+            <svg viewBox="0 0 150 220" xmlns="http://www.w3.org/2000/svg">
+                <!-- Balloons -->
+                <ellipse cx="75" cy="38" rx="30" ry="38" fill="#f0b0c8" opacity="0.8"/>
+                <ellipse cx="50" cy="50" rx="20" ry="28" fill="#b8d0f0" opacity="0.8"/>
+                <ellipse cx="100" cy="48" rx="18" ry="26" fill="#d0b8e8" opacity="0.8"/>
+                <!-- Strings -->
+                <line x1="75" y1="76" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
+                <line x1="50" y1="78" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
+                <line x1="100" y1="74" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
+                <!-- Cat body -->
+                <ellipse cx="75" cy="158" rx="24" ry="19" fill="#e8c0a0"/>
+                <!-- Legs -->
+                <ellipse cx="58" cy="175" rx="6" ry="10" fill="#e8c0a0"/>
+                <ellipse cx="92" cy="175" rx="6" ry="10" fill="#e8c0a0"/>
+                <!-- Tail -->
+                <path d="M96,152 Q118,140 112,168" stroke="#d0a880" stroke-width="6" fill="none" stroke-linecap="round"/>
+                <!-- Head -->
+                <circle cx="75" cy="136" r="17" fill="#e8c0a0"/>
+                <!-- Ears -->
+                <polygon points="62,122 57,108 70,120" fill="#e8c0a0"/>
+                <polygon points="88,122 93,108 80,120" fill="#e8c0a0"/>
+                <polygon points="64,122 59,112 69,120" fill="#f4b8c8"/>
+                <polygon points="86,122 91,112 81,120" fill="#f4b8c8"/>
+                <!-- Eyes -->
+                <circle cx="68" cy="134" r="4" fill="#2a2a3a"/>
+                <circle cx="82" cy="134" r="4" fill="#2a2a3a"/>
+                <circle cx="69" cy="133" r="1.5" fill="white"/>
+                <circle cx="83" cy="133" r="1.5" fill="white"/>
+                <!-- Nose -->
+                <ellipse cx="75" cy="139" rx="2" ry="1.5" fill="#3a3a5a"/>
+                <!-- Mouth -->
+                <path class="cat-smile" d="M72,142 Q75,144 78,142" stroke="#3a3a5a" stroke-width="1" fill="none"/>
+                <!-- Whiskers -->
+                <line x1="65" y1="138" x2="50" y2="136" stroke="#3a3a5a" stroke-width="0.8"/>
+                <line x1="65" y1="141" x2="48" y2="143" stroke="#3a3a5a" stroke-width="0.8"/>
+                <line x1="85" y1="138" x2="100" y2="136" stroke="#3a3a5a" stroke-width="0.8"/>
+                <line x1="85" y1="141" x2="102" y2="143" stroke="#3a3a5a" stroke-width="0.8"/>
+                <!-- Party hat -->
+                <polygon points="75,120 69,105 81,105" fill="#d898d0"/>
+                <circle cx="75" cy="104" r="2" fill="#ffe060"/>
+            </svg>
+        </div>
+
+        <div class="floating-cat" id="float-cat-4" style="right: 3%; bottom: 35%; animation-duration: 11s; animation-delay: 1s;">
+            <svg viewBox="0 0 150 220" xmlns="http://www.w3.org/2000/svg">
+                <!-- Balloons -->
+                <ellipse cx="60" cy="42" rx="24" ry="34" fill="#a0c8e8" opacity="0.8"/>
+                <ellipse cx="90" cy="38" rx="22" ry="30" fill="#e8b0d0" opacity="0.8"/>
+                <!-- Strings -->
+                <line x1="60" y1="76" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
+                <line x1="90" y1="68" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
+                <!-- Cat body -->
+                <ellipse cx="75" cy="160" rx="20" ry="16" fill="#b0b0c0"/>
+                <!-- Dark stripe -->
+                <ellipse cx="75" cy="158" rx="10" ry="12" fill="#8a8a9a"/>
+                <!-- Legs -->
+                <ellipse cx="60" cy="174" rx="5" ry="8" fill="#b0b0c0"/>
+                <ellipse cx="90" cy="174" rx="5" ry="8" fill="#b0b0c0"/>
+                <!-- Tail -->
+                <path d="M93,155 Q112,145 106,168" stroke="#8a8a9a" stroke-width="5" fill="none" stroke-linecap="round"/>
+                <!-- Head -->
+                <circle cx="75" cy="142" r="15" fill="#b0b0c0"/>
+                <!-- Ears -->
+                <polygon points="64,130 60,118 72,128" fill="#b0b0c0"/>
+                <polygon points="86,130 90,118 78,128" fill="#b0b0c0"/>
+                <polygon points="65,130 62,121 71,128" fill="#f4b8c8"/>
+                <polygon points="85,130 88,121 79,128" fill="#f4b8c8"/>
+                <!-- Eyes -->
+                <circle cx="69" cy="140" r="3" fill="#2a2a3a"/>
+                <circle cx="81" cy="140" r="3" fill="#2a2a3a"/>
+                <circle cx="70" cy="139" r="1" fill="white"/>
+                <circle cx="82" cy="139" r="1" fill="white"/>
+                <!-- Nose -->
+                <ellipse cx="75" cy="144" rx="2" ry="1.5" fill="#f4a0a0"/>
+                <!-- Mouth -->
+                <path class="cat-smile" d="M72,147 Q75,149 78,147" stroke="#5a5a6a" stroke-width="1" fill="none"/>
+                <!-- Party hat -->
+                <polygon points="75,128 70,116 80,116" fill="#ffe060"/>
+                <circle cx="75" cy="115" r="2" fill="#d06040"/>
+            </svg>
+        </div>
     </div>
 
     <canvas id="balloon-canvas"></canvas>

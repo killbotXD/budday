@@ -271,6 +271,78 @@
             transition: d 0.5s;
         }
 
+        /* Sleeping state */
+        .floating-cat.asleep {
+            opacity: 0.5;
+            filter: grayscale(0.3);
+        }
+
+        .floating-cat.asleep svg {
+            filter: saturate(0.6);
+        }
+
+        .floating-cat .sleep-eyes { display: none; }
+        .floating-cat .awake-eyes { display: block; }
+        .floating-cat.asleep .sleep-eyes { display: block; }
+        .floating-cat.asleep .awake-eyes { display: none; }
+
+        /* Balloons start deflated when cat is asleep */
+        .floating-cat.asleep .cat-balloon {
+            transform: scale(0.4);
+            transform-origin: center bottom;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .floating-cat .cat-balloon {
+            transform: scale(1);
+            transform-origin: center bottom;
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Wake-up stretch animation */
+        @keyframes catStretch {
+            0% { transform: scaleX(1) scaleY(1); }
+            30% { transform: scaleX(1.15) scaleY(0.85); }
+            60% { transform: scaleX(0.9) scaleY(1.1); }
+            100% { transform: scaleX(1) scaleY(1); }
+        }
+
+        .cat-waking {
+            animation: catStretch 0.6s ease-out;
+        }
+
+        /* Cat speech bubble */
+        .cat-speech {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            background: white;
+            border-radius: 12px;
+            padding: 6px 12px;
+            font-size: 0.8rem;
+            color: #4a4a6a;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(100, 80, 120, 0.15);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+        }
+
+        .cat-speech.show {
+            transform: translateX(-50%) scale(1);
+        }
+
+        .cat-speech::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 7px solid white;
+        }
+
         @keyframes floatCat {
             0% { transform: translateY(0px) rotate(-2deg); }
             25% { transform: translateY(-15px) rotate(1deg); }
@@ -472,174 +544,169 @@
             </svg>
         </div>
 
-        <!-- Floating cats with balloons -->
-        <div class="floating-cat" id="float-cat-1" style="left: 5%; top: 15%;">
+        <!-- Floating cats with balloons (start asleep) -->
+        <div class="floating-cat asleep" id="float-cat-1" data-speech="meow! 🎉" style="left: 5%; top: 15%;">
+            <div class="cat-speech" id="speech-1"></div>
             <svg viewBox="0 0 150 220" xmlns="http://www.w3.org/2000/svg">
                 <!-- Balloons -->
-                <ellipse cx="55" cy="40" rx="25" ry="35" fill="#c0a0e0" opacity="0.8"/>
-                <ellipse cx="90" cy="50" rx="20" ry="30" fill="#a0c0e0" opacity="0.8"/>
-                <ellipse cx="70" cy="55" rx="22" ry="32" fill="#f0b8c8" opacity="0.8"/>
-                <!-- Strings -->
+                <g class="cat-balloon">
+                    <ellipse cx="55" cy="40" rx="25" ry="35" fill="#c0a0e0" opacity="0.8"/>
+                    <ellipse cx="90" cy="50" rx="20" ry="30" fill="#a0c0e0" opacity="0.8"/>
+                    <ellipse cx="70" cy="55" rx="22" ry="32" fill="#f0b8c8" opacity="0.8"/>
+                </g>
                 <line x1="55" y1="75" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
                 <line x1="90" y1="80" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
                 <line x1="70" y1="87" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
-                <!-- Cat body -->
                 <ellipse cx="75" cy="160" rx="25" ry="20" fill="#f0c8b0"/>
-                <!-- Legs -->
                 <ellipse cx="58" cy="178" rx="6" ry="10" fill="#f0c8b0"/>
                 <ellipse cx="92" cy="178" rx="6" ry="10" fill="#f0c8b0"/>
-                <!-- Tail -->
                 <path d="M98,155 Q120,145 115,170" stroke="#f0c8b0" stroke-width="6" fill="none" stroke-linecap="round"/>
-                <!-- Head -->
                 <circle cx="75" cy="138" r="18" fill="#f0c8b0"/>
-                <!-- Ears -->
                 <polygon points="62,125 58,110 70,122" fill="#f0c8b0"/>
                 <polygon points="88,125 92,110 80,122" fill="#f0c8b0"/>
                 <polygon points="64,124 60,114 69,122" fill="#f4b8c8"/>
                 <polygon points="86,124 90,114 81,122" fill="#f4b8c8"/>
-                <!-- Eyes -->
-                <circle cx="68" cy="136" r="4" fill="#2a2a3a"/>
-                <circle cx="82" cy="136" r="4" fill="#2a2a3a"/>
-                <circle cx="69" cy="135" r="1.5" fill="white"/>
-                <circle cx="83" cy="135" r="1.5" fill="white"/>
-                <!-- Nose -->
+                <!-- Sleep eyes -->
+                <g class="sleep-eyes">
+                    <line x1="64" y1="136" x2="72" y2="136" stroke="#2a2a3a" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="78" y1="136" x2="86" y2="136" stroke="#2a2a3a" stroke-width="2" stroke-linecap="round"/>
+                </g>
+                <!-- Awake eyes -->
+                <g class="awake-eyes">
+                    <circle cx="68" cy="136" r="4" fill="#2a2a3a"/>
+                    <circle cx="82" cy="136" r="4" fill="#2a2a3a"/>
+                    <circle cx="69" cy="135" r="1.5" fill="white"/>
+                    <circle cx="83" cy="135" r="1.5" fill="white"/>
+                </g>
                 <ellipse cx="75" cy="141" rx="2" ry="1.5" fill="#3a3a5a"/>
-                <!-- Mouth -->
                 <path class="cat-smile" d="M72,144 Q75,146 78,144" stroke="#3a3a5a" stroke-width="1" fill="none"/>
-                <!-- Whiskers -->
                 <line x1="65" y1="140" x2="50" y2="138" stroke="#3a3a5a" stroke-width="0.8"/>
                 <line x1="65" y1="143" x2="48" y2="145" stroke="#3a3a5a" stroke-width="0.8"/>
                 <line x1="85" y1="140" x2="100" y2="138" stroke="#3a3a5a" stroke-width="0.8"/>
                 <line x1="85" y1="143" x2="102" y2="145" stroke="#3a3a5a" stroke-width="0.8"/>
-                <!-- Party hat -->
                 <polygon points="75,122 68,108 82,108" fill="#6080c0"/>
                 <circle cx="75" cy="107" r="2" fill="#ffe060"/>
-                <!-- Bow -->
                 <path d="M75,155 Q70,150 65,155 Q70,160 75,155" fill="#6080c0"/>
                 <path d="M75,155 Q80,150 85,155 Q80,160 75,155" fill="#6080c0"/>
             </svg>
         </div>
 
-        <div class="floating-cat" id="float-cat-2" style="right: 8%; top: 25%; animation-duration: 7s; animation-delay: 2s;">
+        <div class="floating-cat asleep" id="float-cat-2" data-speech="*yaaawn* 😺" style="right: 8%; top: 25%; animation-duration: 7s; animation-delay: 2s;">
+            <div class="cat-speech" id="speech-2"></div>
             <svg viewBox="0 0 150 220" xmlns="http://www.w3.org/2000/svg">
-                <!-- Balloons -->
-                <ellipse cx="65" cy="35" rx="28" ry="38" fill="#d898d0" opacity="0.8"/>
-                <ellipse cx="95" cy="55" rx="18" ry="28" fill="#90b8e0" opacity="0.8"/>
-                <!-- Strings -->
+                <g class="cat-balloon">
+                    <ellipse cx="65" cy="35" rx="28" ry="38" fill="#d898d0" opacity="0.8"/>
+                    <ellipse cx="95" cy="55" rx="18" ry="28" fill="#90b8e0" opacity="0.8"/>
+                </g>
                 <line x1="65" y1="73" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
                 <line x1="95" y1="83" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
-                <!-- Cat body -->
                 <ellipse cx="75" cy="160" rx="22" ry="18" fill="#d0d0d8"/>
-                <!-- Legs -->
                 <ellipse cx="60" cy="176" rx="5" ry="9" fill="#d0d0d8"/>
                 <ellipse cx="90" cy="176" rx="5" ry="9" fill="#d0d0d8"/>
-                <!-- Tail -->
                 <path d="M95,158 Q115,148 108,172" stroke="#a0a0b0" stroke-width="5" fill="none" stroke-linecap="round"/>
-                <!-- Head -->
                 <circle cx="75" cy="140" r="16" fill="#d0d0d8"/>
-                <!-- Dark face patch -->
                 <circle cx="75" cy="140" r="12" fill="#a0a0b0"/>
-                <!-- Ears -->
                 <polygon points="63,128 60,115 72,126" fill="#d0d0d8"/>
                 <polygon points="87,128 90,115 78,126" fill="#d0d0d8"/>
-                <!-- Eyes -->
-                <circle cx="69" cy="138" r="3.5" fill="#2a2a3a"/>
-                <circle cx="81" cy="138" r="3.5" fill="#2a2a3a"/>
-                <circle cx="70" cy="137" r="1.2" fill="white"/>
-                <circle cx="82" cy="137" r="1.2" fill="white"/>
-                <!-- Nose -->
+                <!-- Sleep eyes -->
+                <g class="sleep-eyes">
+                    <line x1="65" y1="138" x2="73" y2="138" stroke="#2a2a3a" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="77" y1="138" x2="85" y2="138" stroke="#2a2a3a" stroke-width="2" stroke-linecap="round"/>
+                </g>
+                <!-- Awake eyes -->
+                <g class="awake-eyes">
+                    <circle cx="69" cy="138" r="3.5" fill="#2a2a3a"/>
+                    <circle cx="81" cy="138" r="3.5" fill="#2a2a3a"/>
+                    <circle cx="70" cy="137" r="1.2" fill="white"/>
+                    <circle cx="82" cy="137" r="1.2" fill="white"/>
+                </g>
                 <ellipse cx="75" cy="142" rx="2" ry="1.5" fill="#f4a0a0"/>
-                <!-- Mouth -->
                 <path class="cat-smile" d="M72,145 Q75,147 78,145" stroke="#5a5a6a" stroke-width="1" fill="none"/>
-                <!-- Whiskers -->
                 <line x1="66" y1="141" x2="52" y2="139" stroke="#5a5a6a" stroke-width="0.8"/>
                 <line x1="66" y1="144" x2="50" y2="146" stroke="#5a5a6a" stroke-width="0.8"/>
                 <line x1="84" y1="141" x2="98" y2="139" stroke="#5a5a6a" stroke-width="0.8"/>
                 <line x1="84" y1="144" x2="100" y2="146" stroke="#5a5a6a" stroke-width="0.8"/>
-                <!-- Party hat -->
                 <polygon points="75,126 70,112 80,112" fill="#f4b8c8"/>
                 <circle cx="75" cy="111" r="2" fill="white"/>
             </svg>
         </div>
 
-        <div class="floating-cat" id="float-cat-3" style="left: 15%; bottom: 20%; animation-duration: 9s; animation-delay: 4s;">
+        <div class="floating-cat asleep" id="float-cat-3" data-speech="party time? 🎈" style="left: 15%; bottom: 20%; animation-duration: 9s; animation-delay: 4s;">
+            <div class="cat-speech" id="speech-3"></div>
             <svg viewBox="0 0 150 220" xmlns="http://www.w3.org/2000/svg">
-                <!-- Balloons -->
-                <ellipse cx="75" cy="38" rx="30" ry="38" fill="#f0b0c8" opacity="0.8"/>
-                <ellipse cx="50" cy="50" rx="20" ry="28" fill="#b8d0f0" opacity="0.8"/>
-                <ellipse cx="100" cy="48" rx="18" ry="26" fill="#d0b8e8" opacity="0.8"/>
-                <!-- Strings -->
+                <g class="cat-balloon">
+                    <ellipse cx="75" cy="38" rx="30" ry="38" fill="#f0b0c8" opacity="0.8"/>
+                    <ellipse cx="50" cy="50" rx="20" ry="28" fill="#b8d0f0" opacity="0.8"/>
+                    <ellipse cx="100" cy="48" rx="18" ry="26" fill="#d0b8e8" opacity="0.8"/>
+                </g>
                 <line x1="75" y1="76" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
                 <line x1="50" y1="78" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
                 <line x1="100" y1="74" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
-                <!-- Cat body -->
                 <ellipse cx="75" cy="158" rx="24" ry="19" fill="#e8c0a0"/>
-                <!-- Legs -->
                 <ellipse cx="58" cy="175" rx="6" ry="10" fill="#e8c0a0"/>
                 <ellipse cx="92" cy="175" rx="6" ry="10" fill="#e8c0a0"/>
-                <!-- Tail -->
                 <path d="M96,152 Q118,140 112,168" stroke="#d0a880" stroke-width="6" fill="none" stroke-linecap="round"/>
-                <!-- Head -->
                 <circle cx="75" cy="136" r="17" fill="#e8c0a0"/>
-                <!-- Ears -->
                 <polygon points="62,122 57,108 70,120" fill="#e8c0a0"/>
                 <polygon points="88,122 93,108 80,120" fill="#e8c0a0"/>
                 <polygon points="64,122 59,112 69,120" fill="#f4b8c8"/>
                 <polygon points="86,122 91,112 81,120" fill="#f4b8c8"/>
-                <!-- Eyes -->
-                <circle cx="68" cy="134" r="4" fill="#2a2a3a"/>
-                <circle cx="82" cy="134" r="4" fill="#2a2a3a"/>
-                <circle cx="69" cy="133" r="1.5" fill="white"/>
-                <circle cx="83" cy="133" r="1.5" fill="white"/>
-                <!-- Nose -->
+                <!-- Sleep eyes -->
+                <g class="sleep-eyes">
+                    <line x1="64" y1="134" x2="72" y2="134" stroke="#2a2a3a" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="78" y1="134" x2="86" y2="134" stroke="#2a2a3a" stroke-width="2" stroke-linecap="round"/>
+                </g>
+                <!-- Awake eyes -->
+                <g class="awake-eyes">
+                    <circle cx="68" cy="134" r="4" fill="#2a2a3a"/>
+                    <circle cx="82" cy="134" r="4" fill="#2a2a3a"/>
+                    <circle cx="69" cy="133" r="1.5" fill="white"/>
+                    <circle cx="83" cy="133" r="1.5" fill="white"/>
+                </g>
                 <ellipse cx="75" cy="139" rx="2" ry="1.5" fill="#3a3a5a"/>
-                <!-- Mouth -->
                 <path class="cat-smile" d="M72,142 Q75,144 78,142" stroke="#3a3a5a" stroke-width="1" fill="none"/>
-                <!-- Whiskers -->
                 <line x1="65" y1="138" x2="50" y2="136" stroke="#3a3a5a" stroke-width="0.8"/>
                 <line x1="65" y1="141" x2="48" y2="143" stroke="#3a3a5a" stroke-width="0.8"/>
                 <line x1="85" y1="138" x2="100" y2="136" stroke="#3a3a5a" stroke-width="0.8"/>
                 <line x1="85" y1="141" x2="102" y2="143" stroke="#3a3a5a" stroke-width="0.8"/>
-                <!-- Party hat -->
                 <polygon points="75,120 69,105 81,105" fill="#d898d0"/>
                 <circle cx="75" cy="104" r="2" fill="#ffe060"/>
             </svg>
         </div>
 
-        <div class="floating-cat" id="float-cat-4" style="right: 3%; bottom: 35%; animation-duration: 11s; animation-delay: 1s;">
+        <div class="floating-cat asleep" id="float-cat-4" data-speech="zzz... huh?! 😸" style="right: 3%; bottom: 35%; animation-duration: 11s; animation-delay: 1s;">
+            <div class="cat-speech" id="speech-4"></div>
             <svg viewBox="0 0 150 220" xmlns="http://www.w3.org/2000/svg">
-                <!-- Balloons -->
-                <ellipse cx="60" cy="42" rx="24" ry="34" fill="#a0c8e8" opacity="0.8"/>
-                <ellipse cx="90" cy="38" rx="22" ry="30" fill="#e8b0d0" opacity="0.8"/>
-                <!-- Strings -->
+                <g class="cat-balloon">
+                    <ellipse cx="60" cy="42" rx="24" ry="34" fill="#a0c8e8" opacity="0.8"/>
+                    <ellipse cx="90" cy="38" rx="22" ry="30" fill="#e8b0d0" opacity="0.8"/>
+                </g>
                 <line x1="60" y1="76" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
                 <line x1="90" y1="68" x2="75" y2="130" stroke="#3a3a5a" stroke-width="1"/>
-                <!-- Cat body -->
                 <ellipse cx="75" cy="160" rx="20" ry="16" fill="#b0b0c0"/>
-                <!-- Dark stripe -->
                 <ellipse cx="75" cy="158" rx="10" ry="12" fill="#8a8a9a"/>
-                <!-- Legs -->
                 <ellipse cx="60" cy="174" rx="5" ry="8" fill="#b0b0c0"/>
                 <ellipse cx="90" cy="174" rx="5" ry="8" fill="#b0b0c0"/>
-                <!-- Tail -->
                 <path d="M93,155 Q112,145 106,168" stroke="#8a8a9a" stroke-width="5" fill="none" stroke-linecap="round"/>
-                <!-- Head -->
                 <circle cx="75" cy="142" r="15" fill="#b0b0c0"/>
-                <!-- Ears -->
                 <polygon points="64,130 60,118 72,128" fill="#b0b0c0"/>
                 <polygon points="86,130 90,118 78,128" fill="#b0b0c0"/>
                 <polygon points="65,130 62,121 71,128" fill="#f4b8c8"/>
                 <polygon points="85,130 88,121 79,128" fill="#f4b8c8"/>
-                <!-- Eyes -->
-                <circle cx="69" cy="140" r="3" fill="#2a2a3a"/>
-                <circle cx="81" cy="140" r="3" fill="#2a2a3a"/>
-                <circle cx="70" cy="139" r="1" fill="white"/>
-                <circle cx="82" cy="139" r="1" fill="white"/>
-                <!-- Nose -->
+                <!-- Sleep eyes -->
+                <g class="sleep-eyes">
+                    <line x1="65" y1="140" x2="73" y2="140" stroke="#2a2a3a" stroke-width="2" stroke-linecap="round"/>
+                    <line x1="77" y1="140" x2="85" y2="140" stroke="#2a2a3a" stroke-width="2" stroke-linecap="round"/>
+                </g>
+                <!-- Awake eyes -->
+                <g class="awake-eyes">
+                    <circle cx="69" cy="140" r="3" fill="#2a2a3a"/>
+                    <circle cx="81" cy="140" r="3" fill="#2a2a3a"/>
+                    <circle cx="70" cy="139" r="1" fill="white"/>
+                    <circle cx="82" cy="139" r="1" fill="white"/>
+                </g>
                 <ellipse cx="75" cy="144" rx="2" ry="1.5" fill="#f4a0a0"/>
-                <!-- Mouth -->
                 <path class="cat-smile" d="M72,147 Q75,149 78,147" stroke="#5a5a6a" stroke-width="1" fill="none"/>
-                <!-- Party hat -->
                 <polygon points="75,128 70,116 80,116" fill="#ffe060"/>
                 <circle cx="75" cy="115" r="2" fill="#d06040"/>
             </svg>
@@ -680,7 +747,7 @@
                 const mat = new THREE.MeshPhongMaterial({
                     color,
                     transparent: true,
-                    opacity: 0.7,
+                    opacity: 0.15,
                     shininess: 80,
                     specular: 0xffffff,
                 });
@@ -737,6 +804,9 @@
             }
             animate(0);
 
+            // Expose balloons for stage transitions
+            window._threeBalloons = balloons;
+
             window.addEventListener('resize', () => {
                 camera.aspect = window.innerWidth / window.innerHeight;
                 camera.updateProjectionMatrix();
@@ -746,19 +816,36 @@
     </script>
 
     <script>
-        // Generate floating hearts
+        // Hearts (delayed until stage 2 completes)
         const heartsContainer = document.getElementById('hearts');
         const heartColors = ['#4a4a8a', '#d4a0c0', '#a080c0', '#e0b0d0', '#6060a0'];
-        for (let i = 0; i < 25; i++) {
-            const heart = document.createElement('div');
-            heart.className = 'heart';
-            heart.textContent = '♥';
-            heart.style.left = Math.random() * 100 + '%';
-            heart.style.color = heartColors[Math.floor(Math.random() * heartColors.length)];
-            heart.style.fontSize = (8 + Math.random() * 14) + 'px';
-            heart.style.animationDuration = (8 + Math.random() * 12) + 's';
-            heart.style.animationDelay = Math.random() * 10 + 's';
-            heartsContainer.appendChild(heart);
+
+        function startHearts() {
+            for (let i = 0; i < 25; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = '♥';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.color = heartColors[Math.floor(Math.random() * heartColors.length)];
+                heart.style.fontSize = (8 + Math.random() * 14) + 'px';
+                heart.style.animationDuration = (8 + Math.random() * 12) + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heartsContainer.appendChild(heart);
+            }
+        }
+
+        // Colorize Three.js balloons (fade from dim to full)
+        function colorizeBalloons() {
+            if (!window._threeBalloons) return;
+            let progress = 0;
+            function fadeIn() {
+                progress += 0.02;
+                window._threeBalloons.forEach(b => {
+                    b.material.opacity = 0.15 + progress * 0.55;
+                });
+                if (progress < 1) requestAnimationFrame(fadeIn);
+            }
+            fadeIn();
         }
 
         // Google Meet-style confetti system
@@ -977,10 +1064,35 @@
             document.querySelectorAll('.floating-cat').forEach(cat => {
                 cat.style.pointerEvents = 'auto';
                 cat.style.cursor = 'pointer';
-                // Add hint pulse to sleeping cats
                 cat.classList.add('hint-pulse');
             });
         }
+
+        document.querySelectorAll('.floating-cat').forEach((cat, idx) => {
+            cat.addEventListener('click', () => {
+                if (state.stage !== 2 || !cat.classList.contains('asleep')) return;
+
+                // Wake up!
+                cat.classList.remove('asleep', 'hint-pulse');
+                cat.querySelector('svg').classList.add('cat-waking');
+
+                // Show speech bubble
+                const speech = cat.querySelector('.cat-speech');
+                speech.textContent = cat.getAttribute('data-speech');
+                speech.classList.add('show');
+                setTimeout(() => speech.classList.remove('show'), 2500);
+
+                state.catsAwake++;
+                subtitle.textContent = `Cats awake: ${state.catsAwake}/4`;
+
+                if (state.catsAwake === 4) {
+                    // Start hearts and colorize Three.js balloons
+                    startHearts();
+                    colorizeBalloons();
+                    setTimeout(() => advanceStage(3), 1000);
+                }
+            });
+        });
 
         // === STAGE 3: Light the candles ===
         function initStage3() {

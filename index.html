@@ -496,10 +496,8 @@
                         <ellipse cx="250" cy="128" rx="2" ry="4" fill="#ffe060"/>
                     </g>
 
-                    <!-- Clickable candle areas (invisible, on top) -->
-                    <rect class="candle-click-area" data-flame="flame-1" x="210" y="125" width="20" height="40" fill="transparent" style="pointer-events:none; cursor:pointer;"/>
-                    <rect class="candle-click-area" data-flame="flame-2" x="225" y="120" width="20" height="45" fill="transparent" style="pointer-events:none; cursor:pointer;"/>
-                    <rect class="candle-click-area" data-flame="flame-3" x="240" y="125" width="20" height="40" fill="transparent" style="pointer-events:none; cursor:pointer;"/>
+                    <!-- Clickable cake area (lights all candles at once) -->
+                    <rect id="cake-click-area" x="185" y="130" width="100" height="115" fill="transparent" style="pointer-events:none; cursor:pointer;"/>
                 </g>
 
                 <!-- Cat on table -->
@@ -1097,37 +1095,28 @@
             });
         });
 
-        // === STAGE 3: Light the candles ===
+        // === STAGE 3: Light the candles (tap cake) ===
         function initStage3() {
-            // Enable candle click areas
-            document.querySelectorAll('.candle-click-area').forEach(area => {
-                area.style.pointerEvents = 'auto';
-            });
-            // Add glow hint to candle rects (the candle sticks themselves)
-            document.querySelectorAll('#cake rect[rx="1"]').forEach(r => {
-                r.classList.add('candle-hint');
-            });
+            const cakeArea = document.getElementById('cake-click-area');
+            cakeArea.style.pointerEvents = 'auto';
+            // Add glow hint to the whole cake
+            document.getElementById('cake').classList.add('candle-hint');
         }
 
-        document.querySelectorAll('.candle-click-area').forEach(area => {
-            area.addEventListener('click', () => {
-                if (state.stage !== 3) return;
-                const flameId = area.getAttribute('data-flame');
-                const flame = document.getElementById(flameId);
-                if (flame.classList.contains('lit')) return;
+        document.getElementById('cake-click-area').addEventListener('click', () => {
+            if (state.stage !== 3) return;
 
-                flame.classList.add('lit');
-                area.style.pointerEvents = 'none';
-                state.candlesLit++;
-
-                subtitle.textContent = `Candles lit: ${state.candlesLit}/3`;
-
-                if (state.candlesLit === 3) {
-                    // Remove candle hints
-                    document.querySelectorAll('.candle-hint').forEach(r => r.classList.remove('candle-hint'));
-                    setTimeout(() => advanceStage(4), 800);
-                }
+            // Light all flames sequentially with a small stagger
+            ['flame-1', 'flame-2', 'flame-3'].forEach((id, i) => {
+                setTimeout(() => {
+                    document.getElementById(id).classList.add('lit');
+                }, i * 200);
             });
+
+            document.getElementById('cake').classList.remove('candle-hint');
+            document.getElementById('cake-click-area').style.pointerEvents = 'none';
+            subtitle.textContent = 'All candles lit!';
+            setTimeout(() => advanceStage(4), 1200);
         });
     </script>
 </body>

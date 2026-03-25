@@ -134,13 +134,7 @@
         }
 
         #table-cat {
-            cursor: pointer;
             transition: transform 0.2s;
-        }
-
-        #table-cat:hover {
-            transform: scale(1.02);
-            filter: brightness(1.05);
         }
 
         /* Bunting flags */
@@ -246,6 +240,17 @@
         .flame.lit {
             opacity: 1;
             animation: flicker 0.3s ease-in-out infinite alternate;
+        }
+
+        /* Candle glow hint during stage 3 */
+        @keyframes candleGlow {
+            0%, 100% { filter: drop-shadow(0 0 0px transparent); }
+            50% { filter: drop-shadow(0 0 6px #ffe060); }
+        }
+
+        .candle-hint {
+            animation: candleGlow 1.5s ease-in-out infinite;
+            cursor: pointer;
         }
 
         @keyframes flicker {
@@ -474,29 +479,27 @@
                     <rect x="233" y="135" width="4" height="30" fill="#e8c040" rx="1"/>
                     <rect x="248" y="140" width="4" height="25" fill="#6080c0" rx="1"/>
 
-                    <!-- Candle glows (before click) -->
-                    <g id="candle-glow">
-                        <line x1="212" y1="132" x2="206" y2="126" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
-                        <line x1="220" y1="128" x2="220" y2="120" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
-                        <line x1="228" y1="132" x2="234" y2="126" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
-                        <line x1="240" y1="128" x2="240" y2="120" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
-                        <line x1="248" y1="132" x2="242" y2="126" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
-                        <line x1="256" y1="128" x2="256" y2="120" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
-                        <line x1="264" y1="132" x2="270" y2="126" stroke="#d08040" stroke-width="1.5" opacity="0.6"/>
-                    </g>
-
-                    <!-- Flames (hidden until click) -->
-                    <g class="flame" id="flames">
+                    <!-- Individual flames (hidden until tapped in stage 3) -->
+                    <g class="flame" id="flame-1">
                         <ellipse cx="220" cy="132" rx="5" ry="10" fill="#ff6030" opacity="0.9"/>
                         <ellipse cx="220" cy="130" rx="3" ry="7" fill="#ffa040" opacity="0.9"/>
                         <ellipse cx="220" cy="128" rx="2" ry="4" fill="#ffe060"/>
+                    </g>
+                    <g class="flame" id="flame-2">
                         <ellipse cx="235" cy="127" rx="6" ry="12" fill="#ff6030" opacity="0.9"/>
                         <ellipse cx="235" cy="125" rx="4" ry="8" fill="#ffa040" opacity="0.9"/>
                         <ellipse cx="235" cy="123" rx="2" ry="5" fill="#ffe060"/>
+                    </g>
+                    <g class="flame" id="flame-3">
                         <ellipse cx="250" cy="132" rx="5" ry="10" fill="#ff6030" opacity="0.9"/>
                         <ellipse cx="250" cy="130" rx="3" ry="7" fill="#ffa040" opacity="0.9"/>
                         <ellipse cx="250" cy="128" rx="2" ry="4" fill="#ffe060"/>
                     </g>
+
+                    <!-- Clickable candle areas (invisible, on top) -->
+                    <rect class="candle-click-area" data-flame="flame-1" x="210" y="125" width="20" height="40" fill="transparent" style="pointer-events:none; cursor:pointer;"/>
+                    <rect class="candle-click-area" data-flame="flame-2" x="225" y="120" width="20" height="45" fill="transparent" style="pointer-events:none; cursor:pointer;"/>
+                    <rect class="candle-click-area" data-flame="flame-3" x="240" y="125" width="20" height="40" fill="transparent" style="pointer-events:none; cursor:pointer;"/>
                 </g>
 
                 <!-- Cat on table -->
@@ -969,7 +972,7 @@
         const title = document.getElementById('title');
         const subtitle = document.getElementById('subtitle');
         const messageBubble = document.getElementById('message');
-        const candleGlow = document.getElementById('candle-glow');
+        // candleGlow removed — candles handled individually in stage 3
         const catMouth = document.getElementById('cat-mouth');
 
         function advanceStage(nextStage) {
@@ -1096,11 +1099,36 @@
 
         // === STAGE 3: Light the candles ===
         function initStage3() {
+            // Enable candle click areas
             document.querySelectorAll('.candle-click-area').forEach(area => {
                 area.style.pointerEvents = 'auto';
-                area.style.cursor = 'pointer';
+            });
+            // Add glow hint to candle rects (the candle sticks themselves)
+            document.querySelectorAll('#cake rect[rx="1"]').forEach(r => {
+                r.classList.add('candle-hint');
             });
         }
+
+        document.querySelectorAll('.candle-click-area').forEach(area => {
+            area.addEventListener('click', () => {
+                if (state.stage !== 3) return;
+                const flameId = area.getAttribute('data-flame');
+                const flame = document.getElementById(flameId);
+                if (flame.classList.contains('lit')) return;
+
+                flame.classList.add('lit');
+                area.style.pointerEvents = 'none';
+                state.candlesLit++;
+
+                subtitle.textContent = `Candles lit: ${state.candlesLit}/3`;
+
+                if (state.candlesLit === 3) {
+                    // Remove candle hints
+                    document.querySelectorAll('.candle-hint').forEach(r => r.classList.remove('candle-hint'));
+                    setTimeout(() => advanceStage(4), 800);
+                }
+            });
+        });
     </script>
 </body>
 </html>

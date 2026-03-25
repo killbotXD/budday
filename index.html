@@ -4,7 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Happy Budday</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.css"/>
     <style>
+        /* Driver.js custom theme to match our color scheme */
+        .driver-popover {
+            background: #fff0f6 !important;
+            border: 2px solid #d4a0c8 !important;
+            border-radius: 16px !important;
+            box-shadow: 0 8px 30px rgba(150, 100, 160, 0.25) !important;
+        }
+
+        .driver-popover .driver-popover-title {
+            color: #4a4a6a !important;
+            font-family: Georgia, serif !important;
+            font-size: 1.1rem !important;
+        }
+
+        .driver-popover .driver-popover-description {
+            color: #6a5a7a !important;
+            font-family: Georgia, serif !important;
+        }
+
+        .driver-popover .driver-popover-navigation-btns button {
+            background: #c0a0d8 !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 8px !important;
+            padding: 6px 16px !important;
+            font-family: Georgia, serif !important;
+        }
+
+        .driver-popover .driver-popover-navigation-btns button:hover {
+            background: #a880c0 !important;
+        }
+
+        .driver-popover .driver-popover-close-btn {
+            color: #a090b0 !important;
+        }
         * {
             margin: 0;
             padding: 0;
@@ -716,6 +752,7 @@
 
     <canvas id="balloon-canvas"></canvas>
 
+    <script src="https://cdn.jsdelivr.net/npm/driver.js@1.3.1/dist/driver.js.iife.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         // Three.js floating balloons
@@ -973,6 +1010,38 @@
         // candleGlow removed — candles handled individually in stage 3
         const catMouth = document.getElementById('cat-mouth');
 
+        // Driver.js hints for each stage
+        function showHint(element, titleText, description, side) {
+            const driver = window.driver.js.driver;
+            const d = driver({
+                showProgress: false,
+                showButtons: ['next'],
+                nextBtnText: 'Got it!',
+                popoverClass: 'driver-popover',
+                allowClose: true,
+                overlayOpacity: 0.3,
+                stagePadding: 8,
+                stageRadius: 12,
+            });
+            d.highlight({
+                element: element,
+                popover: {
+                    title: titleText,
+                    description: description,
+                    side: side || 'bottom',
+                    align: 'center',
+                },
+            });
+            return d;
+        }
+
+        // Stage 1 initial hint (on page load)
+        setTimeout(() => {
+            if (state.stage === 1) {
+                showHint('#flag-1', '🎪 Hang the flags!', 'Tap each colourful flag to hang it up on the string. Help decorate the party!', 'bottom');
+            }
+        }, 800);
+
         function advanceStage(nextStage) {
             state.stage = nextStage;
             if (nextStage === 2) {
@@ -980,11 +1049,19 @@
                 title.textContent = 'Great! Now wake up the sleepy cats';
                 subtitle.textContent = 'Tap each floating cat to wake them up';
                 initStage2();
+                // Hint for first sleeping cat
+                setTimeout(() => {
+                    showHint('#float-cat-1', '😴 Wake the cats!', 'The party cats fell asleep! Tap each one to wake them up.', 'right');
+                }, 500);
             } else if (nextStage === 3) {
                 document.getElementById('dot-2').classList.add('filled');
                 title.textContent = 'Almost there! Light the candles';
-                subtitle.textContent = 'Tap each candle on the cake';
+                subtitle.textContent = 'Tap the cake to light the candles';
                 initStage3();
+                // Hint for cake
+                setTimeout(() => {
+                    showHint('#cake', '🎂 Light the candles!', 'Tap the birthday cake to light all the candles!', 'right');
+                }, 500);
             } else if (nextStage === 4) {
                 document.getElementById('dot-3').classList.add('filled');
                 title.textContent = 'Happy Birthday!';

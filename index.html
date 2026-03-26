@@ -1011,7 +1011,15 @@
         const catMouth = document.getElementById('cat-mouth');
 
         // Driver.js hints for each stage
+        let activeDriver = null;
+
         function showHint(element, titleText, description, side) {
+            // Dismiss any existing hint first
+            if (activeDriver) {
+                activeDriver.destroy();
+                activeDriver = null;
+            }
+
             const driver = window.driver.js.driver;
             const d = driver({
                 showProgress: false,
@@ -1032,6 +1040,7 @@
                     align: 'center',
                 },
             });
+            activeDriver = d;
             return d;
         }
 
@@ -1043,6 +1052,11 @@
         }, 800);
 
         function advanceStage(nextStage) {
+            // Dismiss any active driver.js overlay
+            if (activeDriver) {
+                activeDriver.destroy();
+                activeDriver = null;
+            }
             state.stage = nextStage;
             if (nextStage === 2) {
                 document.getElementById('dot-1').classList.add('filled');

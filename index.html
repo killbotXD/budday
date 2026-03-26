@@ -1129,6 +1129,9 @@
             flag.addEventListener('click', () => {
                 if (state.stage !== 1 || flag.classList.contains('placed')) return;
 
+                // Dismiss driver hint on first interaction
+                if (activeDriver) { activeDriver.destroy(); activeDriver = null; }
+
                 const target = flag.getAttribute('data-target');
                 flag.setAttribute('points', target);
                 flag.classList.remove('scattered', 'hint-pulse');
@@ -1163,6 +1166,9 @@
         document.querySelectorAll('.floating-cat').forEach((cat, idx) => {
             cat.addEventListener('click', () => {
                 if (state.stage !== 2 || !cat.classList.contains('asleep')) return;
+
+                // Dismiss driver hint on first interaction
+                if (activeDriver) { activeDriver.destroy(); activeDriver = null; }
 
                 // Wake up!
                 cat.classList.remove('asleep', 'hint-pulse');

@@ -304,18 +304,8 @@
         }
 
         .floating-cat svg {
-            width: 160px;
+            width: 100px;
             height: auto;
-        }
-
-        /* Larger tap target around the cat */
-        .floating-cat::after {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: -20px;
-            right: -20px;
-            bottom: -20px;
         }
 
         .floating-cat.happy svg .cat-mouth {
@@ -592,7 +582,7 @@
         </div>
 
         <!-- Floating cats with balloons (start asleep) -->
-        <div class="floating-cat asleep" id="float-cat-1" data-speech="meow! 🎉" style="left: 5%; top: 15%;">
+        <div class="floating-cat asleep" id="float-cat-1" data-speech="meow! 🎉" style="left: 2%; top: 8%; z-index: 7;">
             <div class="cat-speech" id="speech-1"></div>
             <svg viewBox="0 0 150 220" xmlns="http://www.w3.org/2000/svg">
                 <!-- Balloons -->
@@ -638,7 +628,7 @@
             </svg>
         </div>
 
-        <div class="floating-cat asleep" id="float-cat-2" data-speech="*yaaawn* 😺" style="right: 8%; top: 25%; animation-duration: 7s; animation-delay: 2s;">
+        <div class="floating-cat asleep" id="float-cat-2" data-speech="*yaaawn* 😺" style="right: 2%; top: 5%; z-index: 8; animation-duration: 7s; animation-delay: 2s;">
             <div class="cat-speech" id="speech-2"></div>
             <svg viewBox="0 0 150 220" xmlns="http://www.w3.org/2000/svg">
                 <g class="cat-balloon">
@@ -678,7 +668,7 @@
             </svg>
         </div>
 
-        <div class="floating-cat asleep" id="float-cat-3" data-speech="party time? 🎈" style="left: 15%; bottom: 20%; animation-duration: 9s; animation-delay: 4s;">
+        <div class="floating-cat asleep" id="float-cat-3" data-speech="party time? 🎈" style="left: 2%; bottom: 5%; z-index: 9; animation-duration: 9s; animation-delay: 4s;">
             <div class="cat-speech" id="speech-3"></div>
             <svg viewBox="0 0 150 220" xmlns="http://www.w3.org/2000/svg">
                 <g class="cat-balloon">
@@ -721,7 +711,7 @@
             </svg>
         </div>
 
-        <div class="floating-cat asleep" id="float-cat-4" data-speech="zzz... huh?! 😸" style="right: 3%; bottom: 35%; animation-duration: 11s; animation-delay: 1s;">
+        <div class="floating-cat asleep" id="float-cat-4" data-speech="zzz... huh?! 😸" style="right: 2%; bottom: 5%; z-index: 10; animation-duration: 11s; animation-delay: 1s;">
             <div class="cat-speech" id="speech-4"></div>
             <svg viewBox="0 0 150 220" xmlns="http://www.w3.org/2000/svg">
                 <g class="cat-balloon">
